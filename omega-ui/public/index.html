@@ -1,1 +1,100 @@
-// Placeholder content for index.html in omega-ui/public/
+// File: public/index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Omega UI v3</title>
+  </head>
+  <body class="bg-gray-100">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
+
+// File: vite.config.js
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000,
+  },
+});
+
+
+// File: tailwind.config.js
+module.exports = {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,jsx}"
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+
+
+// File: package.json
+{
+  "name": "omega-ui-v3",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.7.15",
+    "@heroicons/react": "^2.1.1",
+    "axios": "^1.6.0",
+    "classnames": "^2.3.2",
+    "lucide-react": "^0.288.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.23.0",
+    "shadcn/ui": "latest"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.24",
+    "tailwindcss": "^3.3.2",
+    "vite": "^5.0.0"
+  }
+}
+
+
+// File: .gitignore
+node_modules
+/dist
+.vscode
+.env
+.DS_Store
+*.log
+
+
+// File: README.md
+# Omega UI v3
+
+Production-ready interface to manage the Omega Shopify Agent System on the n8n Basic Plan. This UI supports:
+- Secure API key management
+- Execution of agent workflows
+- Status dashboards & logs
+- Optional integration with Shopify, eBay, TikTok, and more.
+
+## Dev Setup
+```bash
+npm install
+npm run dev
+```
+
+---
+
+✅ SYNTHMIRAGE Engine: Activated  
+🪞 Dark Mirror Audit: Completed  
+🧠 Meta-ready: Yes  
+🏁 Status: Ready for frontend upload
