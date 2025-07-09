@@ -1,41 +1,27 @@
-import React, { useState } from 'react';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
+import Header from "./components/Header";
+import Dashboard from "./pages/Dashboard";
+import AgentManager from "./pages/AgentManager";
+import APISettings from "./pages/APISettings";
+import Logs from "./pages/Logs";
 
 export default function App() {
-  const [shopifyKey, setShopifyKey] = useState('');
-  const [apiEnabled, setApiEnabled] = useState(false);
-
   return (
-    <div className="p-6 max-w-xl mx-auto space-y-4">
-      <h1 className="text-3xl font-bold text-teal-400">Omega UI v3</h1>
-      <p className="text-sm text-gray-300">Autonomous Commerce Control Panel</p>
-
-      <div className="space-y-2">
-        <label className="block text-gray-300">Enable Shopify Agent:</label>
-        <input
-          type="checkbox"
-          onChange={() => setApiEnabled(!apiEnabled)}
-          className="form-checkbox text-teal-500"
-        />
-      </div>
-
-      {apiEnabled && (
-        <div className="space-y-2">
-          <label className="block text-gray-300">Shopify API Key:</label>
-          <input
-            type="text"
-            value={shopifyKey}
-            onChange={(e) => setShopifyKey(e.target.value)}
-            className="w-full p-2 rounded bg-gray-800 border border-teal-600"
-            placeholder="Enter your Shopify API key"
-          />
+    <Router>
+      <div className="flex h-screen">
+        <Sidebar />
+        <div className="flex-1 overflow-y-auto bg-gray-100">
+          <Header />
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/agents" element={<AgentManager />} />
+            <Route path="/settings" element={<APISettings />} />
+            <Route path="/logs" element={<Logs />} />
+          </Routes>
         </div>
-      )}
-
-      <div className="mt-6">
-        <button className="bg-teal-500 px-4 py-2 rounded text-white hover:bg-teal-600 transition">
-          Launch Omega
-        </button>
       </div>
-    </div>
+    </Router>
   );
 }
