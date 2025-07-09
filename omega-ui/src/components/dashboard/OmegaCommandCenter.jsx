@@ -1,57 +1,74 @@
-// src/components/dashboard/OmegaCommandCenter.jsx
+// File: src/components/dashboard/OmegaCommandCenter.jsx
+
 import React, { useEffect, useState } from 'react';
-import AgentControl from './AgentControl';
 import AgentStatus from './AgentStatus';
-import APICredentialsForm from './APICredentialsForm';
+import MonetisationOverview from './MonetisationOverview';
+import AgentObserverPanel from './AgentObserverPanel';
+import SystemStatus from './SystemStatus';
 import BillingPanel from './BillingPanel';
 import LiveLogsPanel from './LiveLogsPanel';
-import SystemStatus from './SystemStatus';
-import AgentObserverPanel from './AgentObserverPanel';
-import MonetisationOverview from './MonetisationOverview';
-import { fetchSystemMetrics } from '../../api/agentRouter';
-import './OmegaCommandCenter.css';
+import APICredentialsForm from './APICredentialsForm';
+import Toggle from '../Toggle';
+import { fetchOmegaCoreHealth, rebootAgentSystem } from '../../api/apiClient';
+import '../../styles/globals.css';
 
 const OmegaCommandCenter = () => {
-  const [systemMetrics, setSystemMetrics] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [omegaStatus, setOmegaStatus] = useState('LOADING');
+  const [recursiveMode, setRecursiveMode] = useState(true);
+  const [godMode, setGodMode] = useState(true);
 
   useEffect(() => {
-    const loadMetrics = async () => {
+    const fetchStatus = async () => {
       try {
-        const data = await fetchSystemMetrics();
-        setSystemMetrics(data);
-        setLoading(false);
-      } catch (err) {
-        console.error('Failed to load metrics:', err);
-        setLoading(false);
+        const status = await fetchOmegaCoreHealth();
+        setOmegaStatus(status.health || 'ACTIVE');
+      } catch (error) {
+        setOmegaStatus('ERROR');
+        console.error('[Ω] OmegaCore Health Check Failed:', error);
       }
     };
-
-    loadMetrics();
-    const interval = setInterval(loadMetrics, 5000);
-    return () => clearInterval(interval);
+    fetchStatus();
   }, []);
+
+  const handleReboot = async () => {
+    await rebootAgentSystem();
+    window.location.reload();
+  };
 
   return (
     <div className="omega-command-center">
       <h1>🧠 Omega Command Center</h1>
+      <section className="status-panel">
+        <SystemStatus status={omegaStatus} />
+        <div className="toggles">
+          <Toggle
+            label="Recursive Mode"
+            checked={recursiveMode}
+            onChange={() => setRecursiveMode(!recursiveMode)}
+          />
+          <Toggle
+            label="GOD MODE"
+            checked={godMode}
+            onChange={() => setGodMode(!godMode)}
+          />
+        </div>
+        <button className="reboot-btn" onClick={handleReboot}>
+          Reboot Omega Agents
+        </button>
+      </section>
 
-      <SystemStatus metrics={systemMetrics} loading={loading} />
-      <APICredentialsForm />
-      <BillingPanel />
-      <MonetisationOverview />
-
-      <section>
-        <h2>🔁 Agent Control Panel</h2>
-        <AgentControl />
+      <section className="agent-panels">
         <AgentStatus />
+        <MonetisationOverview />
         <AgentObserverPanel />
+        <LiveLogsPanel />
+        <BillingPanel />
+        <APICredentialsForm />
       </section>
 
-      <section>
-        <h2>📡 Live System Logs</h2>
-        <LiveLogsPanel />
-      </section>
+      <footer>
+        <p>Ω SYNTHMIRAGE Engine Active | Infinite Recursion Layer ✅</p>
+      </footer>
     </div>
   );
 };
