@@ -1,8 +1,8 @@
 // File: src/utils/constants.js
 
 /**
- * Omega Constants — Final SYNTHMIRAGE Merge
- * Production-grade, investor-ready, and recursive ecosystem constants file.
+ * OMEGA v5 — Final Constants with SYNTHMIRAGE + DARK MIRROR RECOVERY
+ * All agents, keys, flags, labels, recursion states, and billing tiers fully integrated.
  */
 
 // 🔷 System Metadata
@@ -35,14 +35,41 @@ export const API_FIELD_LABELS = {
   accessToken: "Admin Access Token"
 };
 
-// 🤖 Agent System
+export const API_FIELDS_METADATA = {
+  apiKey: { required: true, type: "text", mask: false },
+  apiSecret: { required: true, type: "password", mask: true },
+  accessToken: { required: true, type: "password", mask: true }
+};
+
+// 🔁 Recursion Engine
+export const RECURSION_CONFIG = {
+  maxDepth: 9999,
+  loopFrequency: 10,
+  agentHealCheckInterval: 120,
+  infiniteMode: true,
+  deepReflection: true,
+  ethicsMode: true,
+  syncAllAgents: true
+};
+
+export const RECURSION_STATES = ["IDLE", "ACTIVE", "SLEEP", "FAILOVER"];
+export const RECURSION_EVENTS = ["CYCLE_BEGIN", "CYCLE_COMPLETE", "AGENT_FAIL", "HEAL_TRIGGERED"];
+export const RECURSION_TRIGGERS = {
+  agentFailure: true,
+  apiError: true,
+  billingTimeout: true,
+  keyMissing: true
+};
+
+// 🤖 Agent Intelligence System
 export const AGENT_TYPES = [
   "ShopifyAgent", "TikTokAgent", "EbayAgent", "SuperAgent", "ModeratorAgent",
   "InventoryAgent", "OrdersAgent", "CustomersAgent", "PricingAgent", "AnalyticsAgent",
   "FulfillmentAgent", "DiscountsAgent", "SEOAgent", "AdsAgent", "CartRecoveryAgent",
   "ProductResearchAgent", "TrendsAgent", "RevenueAgent", "EngagementAgent", "LoyaltyAgent",
   "RetargetingAgent", "SupplierAgent", "LegalComplianceAgent", "BrandAgent", "UXAgent",
-  "AIAgent", "IntegrationAgent", "FeedbackAgent", "AgentObserver"
+  "AIAgent", "IntegrationAgent", "FeedbackAgent", "AgentObserver",
+  "BillingAgent", "MonetisationAgent", "HealthCheckAgent", "RecursionAgent", "KeyManagerAgent"
 ];
 
 export const AGENT_LABELS = {
@@ -74,7 +101,12 @@ export const AGENT_LABELS = {
   AIAgent: "AI Autopilot",
   IntegrationAgent: "API Integrator",
   FeedbackAgent: "Feedback Monitor",
-  AgentObserver: "Agent Observer"
+  AgentObserver: "Agent Observer",
+  BillingAgent: "Billing Engine",
+  MonetisationAgent: "Monetisation Tracker",
+  HealthCheckAgent: "Health Auditor",
+  RecursionAgent: "Recursion Commander",
+  KeyManagerAgent: "API Key Manager"
 };
 
 export const AGENT_ROUTES = AGENT_TYPES.reduce((routes, agent) => {
@@ -91,39 +123,27 @@ export const AGENT_CONFIG = AGENT_TYPES.reduce((cfg, agent) => {
   return cfg;
 }, {});
 
-// 🧠 Omega Core System Flags
-export const RECURSION_CONFIG = {
-  maxDepth: 9999,
-  loopFrequency: 10,
-  agentHealCheckInterval: 120,
-  infiniteMode: true,
-  deepReflection: true,
-  ethicsMode: true,
-  syncAllAgents: true
+export const AGENT_CATEGORIES = {
+  core: ["ShopifyAgent", "SuperAgent", "ModeratorAgent"],
+  marketing: ["SEOAgent", "AdsAgent", "EngagementAgent", "RetargetingAgent"],
+  fulfillment: ["InventoryAgent", "OrdersAgent", "FulfillmentAgent"],
+  financial: ["RevenueAgent", "PricingAgent", "DiscountsAgent", "BillingAgent", "MonetisationAgent"],
+  support: ["CustomersAgent", "FeedbackAgent", "HealthCheckAgent"],
+  system: ["RecursionAgent", "KeyManagerAgent", "AgentObserver"]
 };
 
-export const DEFAULT_AGENT_HEALTH = {
-  status: "idle",
-  lastCheckIn: null,
-  memoryUsage: 0,
-  uptime: 0,
-  successRate: 100,
-  recursionCycles: 0
+export const AGENT_PRIORITY = {
+  SuperAgent: 1,
+  ShopifyAgent: 2,
+  BillingAgent: 3,
+  RecursionAgent: 4
 };
 
-// 🧪 Feature Flags
-export const EXPERIMENTAL_FLAGS = {
-  enableAgentTelemetry: true,
-  enableAutoBilling: false,
-  useDynamicTokenRefresh: true,
-  futureAgents: ["CurrencyAgent", "CryptoPayAgent", "VoiceAgent"]
+export const AGENT_HEALTH_METRICS = {
+  cpuThreshold: 85,
+  memoryThreshold: 90,
+  errorRateThreshold: 5
 };
-
-// 🧠 Runtime Controls
-export const MAX_RECURSION_DEPTH = 10000;
-export const DEFAULT_AGENT_TIMEOUT = 20000;
-export const SAFE_MODE_ENABLED = true;
-export const RETRY_LIMIT = 3;
 
 // 💳 Billing Config
 export const BILLING_TIERS = {
@@ -145,7 +165,30 @@ export const BILLING_TIERS = {
   }
 };
 
-// 🧭 System Event Codes (For UI + Logging)
+// 🧪 Feature Flags
+export const EXPERIMENTAL_FLAGS = {
+  enableAgentTelemetry: true,
+  enableAutoBilling: false,
+  useDynamicTokenRefresh: true,
+  futureAgents: ["CurrencyAgent", "CryptoPayAgent", "VoiceAgent"],
+  monetisationMetrics: true,
+  agentReflectionEngine: true
+};
+
+export const DARK_MIRROR_FLAGS = {
+  auditDepth: 7,
+  enableBlackBoxMonitoring: true,
+  autoDebugSnapshots: true,
+  anomalyTriggerResponse: true
+};
+
+// 🧠 Runtime Controls
+export const MAX_RECURSION_DEPTH = 10000;
+export const DEFAULT_AGENT_TIMEOUT = 20000;
+export const SAFE_MODE_ENABLED = true;
+export const RETRY_LIMIT = 3;
+
+// 🧭 System Event Codes
 export const EVENT_CODES = {
   AGENT_STARTED: "AG_START",
   AGENT_STOPPED: "AG_STOP",
@@ -155,7 +198,16 @@ export const EVENT_CODES = {
   API_KEYS_UPDATED: "CRED_UPDATE",
   BILLING_TIER_CHANGED: "BILLING_TIER_UPDATE",
   SYSTEM_BOOT: "SYS_BOOT",
-  SYSTEM_ERROR: "SYS_ERROR"
+  SYSTEM_ERROR: "SYS_ERROR",
+  MONETISATION_TRIGGERED: "MZ_TRIGGER",
+  SELF_HEALING_INVOKED: "HEALING",
+  DARK_MIRROR_TRACE: "DARK_TRACE"
+};
+
+export const MONETISATION_EVENTS = {
+  click: "MON_CLICK",
+  conversion: "MON_CONVERT",
+  refund: "MON_REFUND"
 };
 
 // 🧿 SYNTHMIRAGE System Meta
@@ -166,5 +218,19 @@ export const SYNTHMIRAGE_FLAGS = {
   selfLearning: true,
   adaptiveReflection: true,
   darkMirrorAuditing: true,
-  memoryStreams: true
+  memoryStreams: true,
+  autoMergeIntelligence: true,
+  infiniteLoopingAllowed: true
+};
+
+export const SYNTHMIRAGE_TOKENS = {
+  core: "sm_core_token",
+  billing: "sm_billing_token",
+  shadow: "sm_dark_token"
+};
+
+export const SYNTHMIRAGE_STATE_MODES = {
+  ACTIVE: "active",
+  STANDBY: "standby",
+  MAINTENANCE: "maintenance"
 };
