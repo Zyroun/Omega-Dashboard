@@ -1,39 +1,40 @@
+// File: src/components/APIKeyManager.jsx
 import React, { useState } from 'react';
-import { Input } from './ui/input';
 
 export function APIKeyManager() {
-  const [shopifyKey, setShopifyKey] = useState('');
-  const [ebayKey, setEbayKey] = useState('');
-  const [tiktokKey, setTiktokKey] = useState('');
-  const [socialKey, setSocialKey] = useState('');
+  const [apiInputs, setApiInputs] = useState({
+    shopifyKey: '',
+    shopifySecret: '',
+    shopifyToken: '',
+    tiktokKey: '',
+    ebayKey: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setApiInputs(prev => ({ ...prev, [name]: value }));
+  };
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-4">API Key Manager</h2>
-      <label className="block mb-2">Shopify API Key (optional):</label>
-      <Input
-        value={shopifyKey}
-        onChange={(e) => setShopifyKey(e.target.value)}
-        placeholder="Paste your Shopify API key here"
-      />
-      <label className="block mt-4 mb-2">eBay API Key (optional):</label>
-      <Input
-        value={ebayKey}
-        onChange={(e) => setEbayKey(e.target.value)}
-        placeholder="Paste your eBay API key here"
-      />
-      <label className="block mt-4 mb-2">TikTok API Key (optional):</label>
-      <Input
-        value={tiktokKey}
-        onChange={(e) => setTiktokKey(e.target.value)}
-        placeholder="Paste your TikTok API key here"
-      />
-      <label className="block mt-4 mb-2">Social Media API Key (optional):</label>
-      <Input
-        value={socialKey}
-        onChange={(e) => setSocialKey(e.target.value)}
-        placeholder="Paste your Social Media API key here"
-      />
+      <h2 className="text-xl font-semibold mb-4">🔑 API Key Manager</h2>
+
+      <div className="space-y-4">
+        <label>Shopify API Key (Optional)</label>
+        <input name="shopifyKey" value={apiInputs.shopifyKey} onChange={handleChange} className="input" placeholder="e.g. e6a99e..." />
+
+        <label>Shopify Secret (Optional)</label>
+        <input name="shopifySecret" value={apiInputs.shopifySecret} onChange={handleChange} className="input" placeholder="e.g. 7a14f9..." />
+
+        <label>Shopify Access Token</label>
+        <input name="shopifyToken" value={apiInputs.shopifyToken} onChange={handleChange} className="input" placeholder="shpat_..." />
+
+        <label>TikTok API Key (Optional)</label>
+        <input name="tiktokKey" value={apiInputs.tiktokKey} onChange={handleChange} className="input" placeholder="..." />
+
+        <label>eBay API Key (Optional)</label>
+        <input name="ebayKey" value={apiInputs.ebayKey} onChange={handleChange} className="input" placeholder="..." />
+      </div>
     </div>
   );
 }
