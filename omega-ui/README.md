@@ -7,5 +7,6 @@ This is the frontend dashboard for the Omega Shopify Agent System. Built with Re
 1. Install dependencies:  
    ```bash
    npm install
-npm run dev
-npm run build
+   npm run dev
+   npm run build
+   
