@@ -1,27 +1,27 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Sidebar from "./components/Sidebar";
-import Header from "./components/Header";
-import Dashboard from "./pages/Dashboard";
-import AgentManager from "./pages/AgentManager";
-import APISettings from "./pages/APISettings";
-import Logs from "./pages/Logs";
+// File: src/components/LiveLogs.jsx
+import React, { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
 
-export default function App() {
+export function LiveLogs() {
+  const [logs, setLogs] = useState(['Initializing Omega Core...', 'Awaiting Agent Execution...']);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLogs((prev) => [
+        ...prev.slice(-9),
+        `Ω [${new Date().toLocaleTimeString()}] Log event: Agent heartbeat active.`,
+      ]);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <Router>
-      <div className="flex h-screen">
-        <Sidebar />
-        <div className="flex-1 overflow-y-auto bg-gray-100">
-          <Header />
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/agents" element={<AgentManager />} />
-            <Route path="/settings" element={<APISettings />} />
-            <Route path="/logs" element={<Logs />} />
-          </Routes>
-        </div>
-      </div>
-    </Router>
+    <Card className="h-64 overflow-y-auto bg-black text-green-400 font-mono p-4">
+      <h2 className="text-xl font-bold mb-2 text-white">Live Execution Logs</h2>
+      {logs.map((log, idx) => (
+        <div key={idx}>{log}</div>
+      ))}
+    </Card>
   );
 }
+
