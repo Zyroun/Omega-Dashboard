@@ -66,3 +66,7 @@ export const logRecursionLoop = (loopId, level, metadata = {}) => {
     JSON.stringify(metadata, null, 2)
   );
 };
+
+export const logBillingEvent = (event, data = {}) => {
+  console.info(`[BILLING][${new Date().toISOString()}] ${event}`, data);
+};
