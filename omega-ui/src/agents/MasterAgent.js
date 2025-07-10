@@ -4,7 +4,7 @@ import { logAgentActivity, logError } from '../utils/logger';
 import { OmegaKernel } from '../core/OmegaKernel';
 import { getAdaptiveStrategy } from '../utils/helpers';
 
-// Full registry of controlled agents
+// 🔗 Full registry of connected agents (monetization, diagnostics, UX, control, etc.)
 const agentRegistry = [
   'InventoryAgent',
   'PricingAgent',
@@ -13,120 +13,102 @@ const agentRegistry = [
   'BillingAgent',
   'FulfillmentAgent',
   'BacklinkAgent',
-  'SEOAgent',
-  'AffiliateAgent',
-  'CartRecoveryAgent',
-  'EmailSequenceAgent',
-  'ConversionAgent',
-  'RevenueAgent',
   'DiagnosticAgent',
   'AnalyticsAgent',
+  'RevenueAgent',
+  'ConversionAgent',
+  'CartRecoveryAgent',
+  'SEOAgent',
+  'AffiliateAgent',
+  'EmailSequenceAgent',
   'UXAgent',
+  'UserBehaviourAgent',
+  'FeedbackLoopAgent',
   'AutoScalingAgent',
-  'SystemHealthAgent',
-  'ABTestAgent',
-  'SettingsAgent',
-  'GrowthAgent',
-  'ForecastAgent',
-  'TrendAgent',
-  'EngagementAgent',
-  'ComplianceAgent',
-  'RefundAgent',
-  'SuspicionAgent',
-  'BehaviorAgent',
-  'SuperUXAgent',
-  'SuperAnalyticsAgent',
-  'SuperRevenueAgent',
+  'EventListenerAgent',
+  'MetaCognitionAgent',
+  'SuperAgent',
+  'OmegaGuardianAgent',
+  'PatternRecognitionAgent',
+  'TrendForecastAgent',
+  'ModifierAgent',
+  'ConfiguratorAgent',
+  'SessionMemoryAgent',
+  'MarketplaceAgent',
+  'ReputationAgent',
 ];
 
+// 🧠 SYNTHMIRAGE-enhanced MasterAgent
 const MasterAgent = {
   name: 'MasterAgent',
   description:
-    'Primary orchestration and monetization controller. Governs all agents, configures system settings, initiates healing loops, and aligns recursive intelligence across the ecosystem.',
+    'Governs and orchestrates all system agents. Capable of monetization, diagnostics, adaptation, and real-time optimization of the Omega ecosystem.',
 
   async execute(commandPayload) {
     const { type, pattern, targetAgents = agentRegistry, options = {} } = commandPayload;
 
-    logAgentActivity('MasterAgent', 'Received Command', commandPayload);
+    logAgentActivity('MasterAgent', 'Command Received', commandPayload);
 
     try {
       switch (type) {
         case 'broadcast':
-          logAgentActivity('MasterAgent', 'Broadcasting Action to Agents', { pattern });
+          logAgentActivity('MasterAgent', 'Broadcasting pattern to agents', { pattern });
           await OmegaKernel.broadcastAction(pattern, targetAgents);
           break;
 
         case 'ignite':
-          logAgentActivity('MasterAgent', 'Igniting Kernel with Agents', { targetAgents, options });
+          logAgentActivity('MasterAgent', 'Igniting kernel with agents', { targetAgents, options });
           await OmegaKernel.ignite(targetAgents, options);
           break;
 
         case 'diagnostics':
-          logAgentActivity('MasterAgent', 'Running Full System Diagnostics');
-          await OmegaKernel.ignite(['DiagnosticAgent', 'SystemHealthAgent', 'AnalyticsAgent'], {
-            diagnostics: true,
-            recursive: true,
-          });
+          logAgentActivity('MasterAgent', 'Running deep system diagnostics');
+          await OmegaKernel.ignite(['DiagnosticAgent'], { diagnostics: true });
           break;
 
         case 'monetize':
-          logAgentActivity('MasterAgent', 'Triggering Full Monetization Cycle');
-          await OmegaKernel.ignite([
-            'RevenueAgent',
-            'EmailAgent',
-            'PricingAgent',
-            'SEOAgent',
-            'AffiliateAgent',
-            'BacklinkAgent',
-            'ConversionAgent',
-          ], {
-            action: 'monetize',
-            pattern,
-            recursive: true,
-          });
+          logAgentActivity('MasterAgent', 'Running monetization sequence');
+          await OmegaKernel.ignite(
+            [
+              'RevenueAgent',
+              'PricingAgent',
+              'EmailAgent',
+              'AffiliateAgent',
+              'SEOAgent',
+              'BacklinkAgent',
+              'ConversionAgent',
+            ],
+            { action: 'monetize', source: 'MasterAgent' }
+          );
           break;
 
-        case 'configure':
-          logAgentActivity('MasterAgent', 'Configuring System Settings');
-          await OmegaKernel.ignite(['SettingsAgent'], { recursive: true, ...options });
+        case 'self-heal':
+          logAgentActivity('MasterAgent', 'Triggering autonomous self-healing system routines');
+          await OmegaKernel.ignite(['DiagnosticAgent', 'TrafficAgent', 'AutoScalingAgent'], { autoHeal: true });
           break;
 
-        case 'heal':
-          logAgentActivity('MasterAgent', 'Initiating Self-Healing Protocols');
-          await OmegaKernel.ignite(['DiagnosticAgent', 'SystemHealthAgent'], {
-            autoHeal: true,
-            recursive: true,
-          });
+        case 'recalibrate':
+          logAgentActivity('MasterAgent', 'Recalibrating all agents based on adaptive feedback');
+          await OmegaKernel.broadcastAction('recalibrate', targetAgents);
           break;
 
-        case 'optimizeUX':
-          logAgentActivity('MasterAgent', 'Optimizing User Experience');
-          await OmegaKernel.ignite(['UXAgent', 'SuperUXAgent'], {
-            action: 'refineUI',
-            data: options,
-            recursive: true,
-          });
+        case 'loop':
+          logAgentActivity('MasterAgent', 'Recursive loop orchestration started');
+          for (let i = 0; i < 5; i++) {
+            await OmegaKernel.broadcastAction(`loop-${i}`, targetAgents);
+          }
           break;
 
-        case 'learn':
-          logAgentActivity('MasterAgent', 'Triggering Recursive Learning Loop');
-          await OmegaKernel.ignite(['AnalyticsAgent', 'SuperAnalyticsAgent'], {
-            action: 'learnAndAdapt',
-            pattern,
-            recursive: true,
-          });
-          break;
-
-        case 'supercharge':
-          logAgentActivity('MasterAgent', 'Supercharging Revenue System');
-          await OmegaKernel.ignite(['SuperRevenueAgent'], {
-            action: 'maximize',
-            recursive: true,
+        case 'evolve':
+          logAgentActivity('MasterAgent', 'Triggering intelligent evolution protocol');
+          await OmegaKernel.ignite(['MetaCognitionAgent', 'OmegaGuardianAgent'], {
+            evolve: true,
+            liveData: true,
           });
           break;
 
         default:
-          logAgentActivity('MasterAgent', 'Unknown Command Type', { type });
+          logAgentActivity('MasterAgent', 'Unknown command type', { type });
           break;
       }
 
