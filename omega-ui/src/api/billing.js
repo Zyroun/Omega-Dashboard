@@ -1,0 +1,23 @@
+// File: src/api/billing.js
+
+import { log, logError } from '../utils/logger.js';
+
+export const getBillingStatus = async (req, res) => {
+  try {
+    // Example mock data — replace with real API (Stripe, Render, n8n billing)
+    const billingInfo = {
+      plan: 'n8n Basic Plan',
+      usage: '11,215 operations',
+      quota: '20,000 operations',
+      billingCycle: 'July 1 - July 31',
+      nextInvoice: 'Aug 1, 2025',
+      usagePercent: Math.round((11215 / 20000) * 100)
+    };
+
+    log('Returned billing status to frontend dashboard.', 'BillingAPI');
+    res.status(200).json(billingInfo);
+  } catch (error) {
+    logError(error, 'BillingAPI');
+    res.status(500).json({ error: 'Unable to fetch billing status' });
+  }
+};
