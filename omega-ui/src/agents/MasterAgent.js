@@ -36,6 +36,8 @@ const agentRegistry = [
   'SessionMemoryAgent',
   'MarketplaceAgent',
   'ReputationAgent',
+  'FeedbackLoopAgent',
+  'SuperIntelligenceAgent', 
 ];
 
 // 🧠 SYNTHMIRAGE-enhanced MasterAgent
