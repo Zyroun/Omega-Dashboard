@@ -1,0 +1,36 @@
+.monetisation-overview {
+  background-color: #1c1c1c;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #333;
+  color: #fafafa;
+}
+
+.metrics-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.metric {
+  background: #282828;
+  padding: 12px 16px;
+  border-radius: 8px;
+  flex: 1;
+  min-width: 160px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 255, 128, 0.1);
+}
+
+.metric-title {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #00ffc6;
+}
