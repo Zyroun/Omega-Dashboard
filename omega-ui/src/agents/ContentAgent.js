@@ -2,43 +2,68 @@
 
 import { logAgentActivity, logError } from '../utils/logger';
 import { generateExecutionId } from '../utils/helpers';
+import axios from 'axios';
 
 const ContentAgent = {
   name: 'ContentAgent',
-  description: 'Creates and updates content including product descriptions, blog posts, meta tags, and marketing copy.',
+  description: 'Generates and rewrites AI-optimized content for storefronts, blogs, and product listings.',
 
   async execute(payload) {
     const executionId = generateExecutionId();
-    logAgentActivity('ContentAgent', 'Execution started', { executionId, payload });
+    logAgentActivity('ContentAgent', 'Content generation initiated', { executionId, payload });
 
     try {
       const {
-        contentType = 'productDescription',
-        topic = '',
-        product = {},
-        tone = 'professional',
-        wordCount = 150,
+        contentType = 'product_description',  // blog_post, landing_page
+        keywords = [],
+        tone = 'informative',
+        targetPages = [],
+        rewriteExisting = false,
       } = payload;
 
-      const generatedText = `This is a ${tone} ${contentType} for "${product.name || topic}" with around ${wordCount} words.`;
+      const generatedContent = [];
 
-      logAgentActivity('ContentAgent', 'Generated content', {
+      for (const page of targetPages) {
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+          model: 'gpt-4',
+          messages: [
+            {
+              role: 'system',
+              content: `You are a Shopify AI Content Strategist. Write ${contentType.replace('_', ' ')} in a ${tone} tone using keywords: ${keywords.join(', ')}.`,
+            },
+            {
+              role: 'user',
+              content: `Rewrite content for page: ${page}. Focus on SEO.`,
+            },
+          ],
+        }, {
+          headers: {
+            'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        generatedContent.push({
+          page,
+          content: response.data.choices[0].message.content,
+        });
+      }
+
+      logAgentActivity('ContentAgent', 'Content generation completed', {
         executionId,
-        content: generatedText,
+        count: generatedContent.length,
       });
 
       return {
         status: 'success',
+        contentGenerated: generatedContent,
         executionId,
-        contentType,
-        output: generatedText,
-        source: 'AI Engine',
       };
-    } catch (err) {
-      logError(err, 'ContentAgent::execute');
+    } catch (error) {
+      logError(error, 'ContentAgent::execute');
       return {
         status: 'error',
-        message: err.message,
+        message: error.message,
       };
     }
   },
