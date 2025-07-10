@@ -1,0 +1,47 @@
+// File: src/agents/TrendForecastAgent.js
+
+import { logAgentActivity, logError } from '../utils/logger';
+import { OmegaKernel } from '../core/OmegaKernel';
+import { getAdaptiveStrategy } from '../utils/helpers';
+
+const TrendForecastAgent = {
+  name: 'TrendForecastAgent',
+  description: 'Predicts market trends, seasonal patterns, and customer behaviors to optimize timing of campaigns, inventory, and pricing.',
+
+  async execute(payload) {
+    logAgentActivity('TrendForecastAgent', 'Forecast sequence started', payload);
+
+    try {
+      const { timeframe = '30d', dataSource = 'shopify+social+search', signalThreshold = 0.7 } = payload;
+
+      const predictionInput = {
+        timeframe,
+        signals: ['sales', 'traffic', 'abandonment', 'interest', 'CTR', 'SKU patterns'],
+        source: dataSource,
+      };
+
+      const forecast = await OmegaKernel.analyzeTrends(predictionInput);
+
+      const strategy = getAdaptiveStrategy(forecast.pattern || 'surge');
+
+      logAgentActivity('TrendForecastAgent', 'Forecast completed', {
+        forecast,
+        strategy,
+      });
+
+      return {
+        status: 'success',
+        forecast,
+        recommendedStrategy: strategy,
+      };
+    } catch (err) {
+      logError(err, 'TrendForecastAgent::execute');
+      return {
+        status: 'error',
+        message: err.message,
+      };
+    }
+  },
+};
+
+export default TrendForecastAgent;
