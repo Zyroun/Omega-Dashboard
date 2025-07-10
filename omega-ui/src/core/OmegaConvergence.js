@@ -3,10 +3,13 @@
 import { logAgentActivity, logSystemHealth } from '../utils/logger';
 import { triggerAgentResponse } from '../api/agentRouter';
 import { getAdaptiveStrategy } from '../utils/helpers';
+import OmegaIntelligence from './OmegaIntelligence';
+import OmegaRecursionEngine from './OmegaRecursionEngine';
 
 export class OmegaConvergenceEngine {
   constructor() {
     this.decisions = [];
+    this.convergenceIdCounter = 0;
   }
 
   decide(agentName, pattern) {
@@ -40,6 +43,61 @@ export class OmegaConvergenceEngine {
 
   getDecisionLog(limit = 20) {
     return this.decisions.slice(-limit);
+  }
+
+  async converge(agentGroup, payload, options = {}) {
+    const convergenceId = ++this.convergenceIdCounter;
+    const results = [];
+
+    logSystemHealth('CONVERGENCE_INITIATED', {
+      convergenceId,
+      agentGroup,
+      payload,
+      options,
+    });
+
+    for (const agent of agentGroup) {
+      try {
+        const intelligence = OmegaIntelligence.recommendActions(agent, payload);
+
+        logAgentActivity(agent, 'INTELLIGENCE_GENERATED', {
+          convergenceId,
+          intelligence,
+        });
+
+        const result = await OmegaRecursionEngine.execute(agent, {
+          ...payload,
+          intelligence,
+        });
+
+        results.push({
+          agent,
+          result,
+          intelligence,
+          timestamp: new Date().toISOString(),
+        });
+
+      } catch (err) {
+        results.push({
+          agent,
+          error: err.message,
+          timestamp: new Date().toISOString(),
+        });
+
+        logAgentActivity(agent, 'EXECUTION_FAILED', {
+          convergenceId,
+          error: err.message,
+        });
+      }
+    }
+
+    logSystemHealth('CONVERGENCE_COMPLETED', {
+      convergenceId,
+      agentGroup,
+      results,
+    });
+
+    return results;
   }
 }
 
