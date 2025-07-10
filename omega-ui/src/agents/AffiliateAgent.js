@@ -1,36 +1,38 @@
 // File: src/agents/AffiliateAgent.js
 
 import { logAgentActivity, logError } from '../utils/logger';
-import { generateUniqueAffiliateLink } from '../utils/helpers';
+import { generateExecutionId } from '../utils/helpers';
 
 const AffiliateAgent = {
   name: 'AffiliateAgent',
-  description: 'Generates and manages affiliate links, commissions, and partner relationships.',
+  description: 'Creates, manages, and scales affiliate programs to drive external revenue and partnerships.',
 
-  async execute({ affiliateId, campaign = 'default', productIds = [] }) {
-    logAgentActivity('AffiliateAgent', 'Affiliate Request Received', {
-      affiliateId,
-      campaign,
-      productIds,
-    });
+  async execute(payload) {
+    logAgentActivity('AffiliateAgent', 'Affiliate workflow initiated', payload);
 
     try {
-      const affiliateLink = generateUniqueAffiliateLink(affiliateId, campaign, productIds);
+      const affiliateProgram = {
+        programId: generateExecutionId(),
+        title: payload.title || 'Default Affiliate Program',
+        commissionRate: payload.commissionRate || '10%',
+        referralLink: `https://shopify.com/${payload.store || 'your-store'}/ref/${Math.random().toString(36).substring(7)}`,
+        influencer: payload.influencer || 'generic-influencer',
+        active: true,
+        trackingEnabled: true,
+        createdAt: new Date().toISOString(),
+      };
 
-      // Simulate database/logging tracking
-      logAgentActivity('AffiliateAgent', 'Affiliate Link Generated', { affiliateLink });
+      logAgentActivity('AffiliateAgent', 'Affiliate program created', affiliateProgram);
 
       return {
         status: 'success',
-        link: affiliateLink,
-        campaign,
-        products: productIds,
+        affiliate: affiliateProgram,
       };
-    } catch (error) {
-      logError(error, 'AffiliateAgent::execute');
+    } catch (err) {
+      logError(err, 'AffiliateAgent::execute');
       return {
         status: 'error',
-        message: error.message,
+        message: err.message,
       };
     }
   },
