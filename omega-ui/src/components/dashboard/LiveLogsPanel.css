@@ -1,0 +1,26 @@
+.live-logs-panel {
+  background-color: #0d0d0d;
+  border: 1px solid #333;
+  padding: 16px;
+  border-radius: 12px;
+  color: #e2e2e2;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.log-output {
+  flex-grow: 1;
+  overflow-y: auto;
+  background-color: #111;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.log-line {
+  margin-bottom: 4px;
+}
