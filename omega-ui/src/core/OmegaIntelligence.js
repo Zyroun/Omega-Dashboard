@@ -4,6 +4,7 @@ import { logAgentActivity, logSystemHealth } from '../utils/logger';
 import { OmegaConvergence } from './OmegaConvergence';
 import { getSystemMetrics, detectPatterns } from '../utils/helpers';
 import { OmegaMemory } from './OmegaMemory'; // optional long-term state memory module
+import { getAdaptiveStrategy } from '../utils/helpers';
 
 export class OmegaIntelligence {
   constructor() {
@@ -11,7 +12,12 @@ export class OmegaIntelligence {
     this.loopCounter = 0;
     this.lastSystemState = {};
   }
-
+  
+export const OmegaIntelligence = {
+  evaluatePatterns(agentName, data) {
+    const patterns = data?.patterns || [];
+    const decision = patterns.map(getAdaptiveStrategy);
+  
   async initialize() {
     logSystemHealth('Initializing Omega Intelligence Engine...', {
       timestamp: new Date().toISOString(),
