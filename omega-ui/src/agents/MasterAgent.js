@@ -1,45 +1,22 @@
+// File: src/agents/MasterAgent.js
+
 import { logAgentActivity, logError } from '../utils/logger';
 import { OmegaKernel } from '../core/OmegaKernel';
 import { getAdaptiveStrategy } from '../utils/helpers';
 
-// Registry of all subordinate agents (expandable)
 const agentRegistry = [
-  'InventoryAgent',
-  'PricingAgent',
-  'TrafficAgent',
-  'EmailAgent',
-  'BillingAgent',
-  'FulfillmentAgent',
-  'BacklinkAgent',
-  'DiagnosticAgent',
-  'AnalyticsAgent',
-  'SEOAgent',
-  'RefundAgent',
-  'RetentionAgent',
-  'ConversionAgent',
-  'SupportAgent',
-  'OrderAgent',
-  'ReviewAgent',
-  'FraudAgent',
-  'AlertAgent',
-  'SalesAgent',
-  'OfferAgent',
-  'CrossSellAgent',
-  'UpsellAgent',
-  'CampaignAgent',
-  'MetaAgent',
-  'AffiliateAgent',
-  'StockAgent',
-  'ReturnAgent',
-  'SubscriptionAgent',
-  'ReactivationAgent',
-  'ReengagementAgent',
+  'InventoryAgent', 'PricingAgent', 'TrafficAgent', 'EmailAgent', 'BillingAgent',
+  'FulfillmentAgent', 'BacklinkAgent', 'DiagnosticAgent', 'AnalyticsAgent', 'ReviewAgent',
+  'RefundAgent', 'SecurityAgent', 'ReferralAgent', 'GrowthAgent', 'SEOAgent',
+  'AffiliateAgent', 'LoyaltyAgent', 'MarketplaceSyncAgent', 'ModerationAgent', 'SuperAgent',
+  'WebhookAgent', 'SyncAgent', 'APIKeyManager', 'SystemSettingsAgent', 'ConfigAgent',
+  'UpdateAgent', 'SchedulerAgent', 'MetaAgent', 'MonetizationAgent', 'NotificationAgent'
 ];
 
 const MasterAgent = {
   name: 'MasterAgent',
   description:
-    'The supreme coordinator. Monetizes, configures, commands, diagnoses, heals, and operates all agents autonomously.',
+    'Supreme controller for all agents. Manages, configures, monetizes, and governs entire Omega Ecosystem.',
 
   async execute(commandPayload) {
     const { type, pattern, targetAgents = agentRegistry, options = {} } = commandPayload;
@@ -49,46 +26,69 @@ const MasterAgent = {
     try {
       switch (type) {
         case 'broadcast':
-          logAgentActivity('MasterAgent', 'Broadcasting pattern to agents', { pattern });
+          logAgentActivity('MasterAgent', 'Broadcasting to agents', { pattern });
           await OmegaKernel.broadcastAction(pattern, targetAgents);
           break;
 
         case 'ignite':
-          logAgentActivity('MasterAgent', 'Igniting agents with kernel', { agents: targetAgents });
+          logAgentActivity('MasterAgent', 'Igniting target agents', { targetAgents, options });
           await OmegaKernel.ignite(targetAgents, options);
           break;
 
         case 'diagnostics':
-          logAgentActivity('MasterAgent', 'Running full diagnostics');
-          await OmegaKernel.ignite(['DiagnosticAgent', 'AnalyticsAgent'], { diagnostics: true });
+          await OmegaKernel.ignite(['DiagnosticAgent'], { diagnostics: true });
           break;
 
         case 'monetize':
-          logAgentActivity('MasterAgent', 'Initiating full monetization mode');
-          await OmegaKernel.broadcastAction('high traffic surge', [
-            'PricingAgent',
-            'EmailAgent',
-            'SEOAgent',
-            'BacklinkAgent',
-            'CrossSellAgent',
-            'UpsellAgent',
-            'CampaignAgent',
-            'AffiliateAgent',
+          logAgentActivity('MasterAgent', 'Orchestrating Monetization Suite');
+          await OmegaKernel.ignite([
+            'PricingAgent', 'TrafficAgent', 'ReferralAgent', 'ReviewAgent',
+            'AffiliateAgent', 'SEOAgent', 'MonetizationAgent'
+          ], { mode: 'optimize' });
+          break;
+
+        case 'configure':
+          await OmegaKernel.broadcastAction('load settings', [
+            'ConfigAgent', 'SystemSettingsAgent', 'APIKeyManager'
           ]);
           break;
 
-        case 'heal':
-          logAgentActivity('MasterAgent', 'Executing self-healing routines');
-          await OmegaKernel.ignite(['DiagnosticAgent', 'TrafficAgent', 'SupportAgent'], { autoHeal: true });
+        case 'security':
+          await OmegaKernel.ignite(['SecurityAgent', 'WebhookAgent'], { scan: true });
           break;
 
-        case 'shutdown':
-          logAgentActivity('MasterAgent', 'System-wide shutdown initiated');
-          // Optional: implement kill-switch broadcasting
+        case 'heal':
+          await OmegaKernel.ignite([
+            'DiagnosticAgent', 'SecurityAgent', 'SyncAgent', 'SchedulerAgent'
+          ], { autoHeal: true });
+          break;
+
+        case 'meta':
+          await OmegaKernel.ignite(['MetaAgent'], { analyze: true });
+          break;
+
+        case 'update':
+          await OmegaKernel.ignite(['UpdateAgent'], { mode: 'sync' });
+          break;
+
+        case 'schedule':
+          await OmegaKernel.ignite(['SchedulerAgent'], { cycle: 'daily' });
+          break;
+
+        case 'notifications':
+          await OmegaKernel.broadcastAction('dispatch notices', ['NotificationAgent']);
+          break;
+
+        case 'super':
+          await OmegaKernel.ignite(['SuperAgent'], { oversee: true });
+          break;
+
+        case 'moderate':
+          await OmegaKernel.ignite(['ModerationAgent'], { audit: true });
           break;
 
         default:
-          logAgentActivity('MasterAgent', 'Unknown command type received', { type });
+          logAgentActivity('MasterAgent', 'Unknown command type', { type });
           break;
       }
 
@@ -96,13 +96,13 @@ const MasterAgent = {
         status: 'success',
         executed: type,
         agents: targetAgents,
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logError(error, 'MasterAgent::execute');
       return {
         status: 'error',
         message: error.message,
-        context: { type, targetAgents },
       };
     }
   },
