@@ -1,0 +1,66 @@
+// File: src/agents/OmegaGuardianAgent.js
+
+import { logAgentActivity, logError } from '../utils/logger';
+import { OmegaKernel } from '../core/OmegaKernel';
+
+const OmegaGuardianAgent = {
+  name: 'OmegaGuardianAgent',
+  description: 'Serves as the ethical watchdog, security firewall, and stability governor across the Omega ecosystem. Initiates healing, resets, and policy enforcement.',
+
+  async execute(payload) {
+    logAgentActivity('OmegaGuardianAgent', 'Guardian sequence initiated', payload);
+
+    try {
+      const { scanScope = 'full', enforcePolicies = true, securitySweep = true } = payload;
+
+      const auditTargets = [
+        'RevenueAgent',
+        'ConversionAgent',
+        'ModifierAgent',
+        'InventoryAgent',
+        'BillingAgent',
+        'MetaCognitionAgent',
+        'PatternRecognitionAgent',
+      ];
+
+      const auditResults = await OmegaKernel.auditAgents(auditTargets, {
+        mode: 'guardian-check',
+        enforcePolicies,
+        securitySweep,
+        timestamp: Date.now(),
+      });
+
+      const unstableAgents = auditResults.filter(agent => agent.status === 'unstable' || agent.flagged === true);
+      const healResults = [];
+
+      for (const agent of unstableAgents) {
+        const heal = await OmegaKernel.ignite(['DiagnosticAgent'], {
+          target: agent.name,
+          autoHeal: true,
+          source: 'OmegaGuardian',
+        });
+        healResults.push({ agent: agent.name, heal });
+      }
+
+      logAgentActivity('OmegaGuardianAgent', 'Guardian sequence complete', {
+        auditResults,
+        healResults,
+      });
+
+      return {
+        status: 'success',
+        audited: auditTargets.length,
+        healed: healResults.length,
+        results: { auditResults, healResults },
+      };
+    } catch (err) {
+      logError(err, 'OmegaGuardianAgent::execute');
+      return {
+        status: 'error',
+        message: err.message,
+      };
+    }
+  },
+};
+
+export default OmegaGuardianAgent;
