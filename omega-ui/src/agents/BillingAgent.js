@@ -1,81 +1,53 @@
+// File: src/agents/BillingAgent.js
+
 import { logAgentActivity, logError } from '../utils/logger';
-import { delay, formatCurrency } from '../utils/helpers';
+import axios from 'axios';
+import { getAPICredentials } from '../api/credentials';
 
 const BillingAgent = {
   name: 'BillingAgent',
-  description: 'Handles billing cycles, invoicing, payments, refunds, and subscription monetisation flows.',
+  description: 'Manages billing status, fetches payment history, and ensures Shopify subscription compliance.',
 
-  async execute(payload) {
-    logAgentActivity('BillingAgent', 'Execution Started', payload);
+  async execute(commandPayload) {
+    const { action = 'status' } = commandPayload;
+
+    logAgentActivity('BillingAgent', 'Command Received', { action });
 
     try {
-      const { eventType, customerId, amount, currency = 'USD', invoiceId } = payload;
+      const { accessToken } = await getAPICredentials();
 
-      let actionTaken = '';
-      let responseDetails = {};
+      switch (action) {
+        case 'status': {
+          const response = await axios.get('/api/billing/status', {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+          logAgentActivity('BillingAgent', 'Fetched billing status', response.data);
+          return response.data;
+        }
 
-      switch (eventType) {
-        case 'generate_invoice':
-          actionTaken = 'invoice_generated';
-          responseDetails = {
-            invoiceId: `INV-${Date.now()}`,
-            customerId,
-            amount: formatCurrency(amount, currency),
-          };
-          break;
+        case 'history': {
+          const response = await axios.get('/api/billing/history', {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+          logAgentActivity('BillingAgent', 'Fetched billing history', response.data);
+          return response.data;
+        }
 
-        case 'charge_payment':
-          actionTaken = 'payment_charged';
-          responseDetails = {
-            invoiceId,
-            customerId,
-            amountCharged: formatCurrency(amount, currency),
-            status: 'paid',
-          };
-          break;
-
-        case 'retry_failed_payment':
-          actionTaken = 'retry_triggered';
-          responseDetails = {
-            invoiceId,
-            attempt: 1,
-            status: 'pending',
-          };
-          break;
-
-        case 'issue_refund':
-          actionTaken = 'refund_issued';
-          responseDetails = {
-            invoiceId,
-            amountRefunded: formatCurrency(amount, currency),
-            status: 'refunded',
-          };
-          break;
+        case 'cancel': {
+          const response = await axios.post('/api/billing/cancel', {}, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+          logAgentActivity('BillingAgent', 'Cancelled billing subscription', response.data);
+          return response.data;
+        }
 
         default:
-          actionTaken = 'no_valid_event';
-          responseDetails = { info: 'Unrecognized billing event' };
-          break;
+          logAgentActivity('BillingAgent', 'Unknown billing action', { action });
+          return { status: 'error', message: 'Unknown billing action' };
       }
-
-      await delay(300); // simulate processing
-      logAgentActivity('BillingAgent', 'Billing Event Processed', {
-        eventType,
-        actionTaken,
-        details: responseDetails,
-      });
-
-      return {
-        status: 'success',
-        action: actionTaken,
-        details: responseDetails,
-      };
     } catch (err) {
       logError(err, 'BillingAgent::execute');
-      return {
-        status: 'error',
-        message: err.message,
-      };
+      return { status: 'error', message: err.message };
     }
   },
 };
